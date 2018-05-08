@@ -41,13 +41,26 @@ public class View extends JPanel{
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g2D.clearRect(0, 0, getWidth(), getHeight());
-		
-		
+
+
+		double scaling = getScale();
+		overviewRect.setRect(0,0,getWidth()/4, getHeight()/4);
+		// g2D.setColor(Color.WHITE);
+		// g2D.fill(overviewRect);
+		g2D.setColor(Color.BLACK);
+		g2D.draw(overviewRect);
+
+		marker.setRect(0,0,1/scaling*getWidth()/4, 1/scaling*getHeight()/4);
+		g2D.setColor(Color.BLACK);
+		g2D.draw(marker);
+
+		g2D.scale(scaling,scaling);
 		
 		paintDiagram(g2D);
-		
-		
-		
+
+
+		g2D.scale(0.25/scaling,0.25/scaling);
+		paintDiagram(g2D);
 		
 	}
 	private void paintDiagram(Graphics2D g2D){
@@ -55,6 +68,7 @@ public class View extends JPanel{
 			element.paint(g2D);
 		}
 	}
+
 	
 	public void setScale(double scale) {
 		this.scale = scale;
@@ -78,7 +92,7 @@ public class View extends JPanel{
 		setTranslateX(x);
 		setTranslateY(y);
 	}	
-	public void updateMarker(int x, int y){
+	public void updateMarker(double x, double y){
 		marker.setRect(x, y, 16, 10);
 	}
 	public Rectangle2D getMarker(){

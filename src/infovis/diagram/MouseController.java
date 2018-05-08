@@ -9,10 +9,11 @@ import infovis.diagram.elements.None;
 import infovis.diagram.elements.Vertex;
 import infovis.diagram.layout.Fisheye;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -179,8 +180,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		} else if (edgeDrawMode){
 			drawingEdge.setX(e.getX());
 			drawingEdge.setY(e.getY());
-		}else if(selectedElement != null){
+		} else if(selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
+		} else if(view.markerContains(x,y)){
+			view.updateMarker(x,y);
 		}
 		view.repaint();
 	}
