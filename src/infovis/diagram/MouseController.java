@@ -28,6 +28,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private DrawingEdge drawingEdge = null;
 	 private boolean fisheyeMode;
 	 private GroupingRectangle groupRectangle;
+	 private boolean dragMode = false;
 	/*
 	 * Getter And Setter
 	 */
@@ -53,8 +54,6 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY();
 		double scale = view.getScale();
-		
-		
 		
 		if (e.getButton() == MouseEvent.BUTTON3){
 			/*
@@ -92,7 +91,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY();
 		double scale = view.getScale();
-		
+
+        if (view.markerContains(x,y)) {
+            dragMode = true;
+        }
 	   
 	   if (edgeDrawMode){
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
@@ -169,6 +171,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY();
 		double scale = view.getScale();
+		Rectangle2D overviewRect = view.getOverviewRect();
 		/*
 		 * Aufgabe 1.2
 		 */
@@ -182,8 +185,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			drawingEdge.setY(e.getY());
 		} else if(selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
-		} else if(view.markerContains(x,y)){
-			view.updateMarker(x,y);
+		} else if(view.overviewRectContains(x,y)){
+		    System.out.println("Draggiiiing");
+			view.updateTranslation((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
+            view.updateMarker((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
 		}
 		view.repaint();
 	}
