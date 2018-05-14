@@ -186,7 +186,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		} else if(selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
-		if(view.overviewRectContains(x,y)&& view.markerContains(x,y)){
+		if(view.overviewRectContains(x,y) && view.markerContains(x,y)){
 		    System.out.println("Draggiiiing");
 			view.updateTranslation((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
             view.updateMarker((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);

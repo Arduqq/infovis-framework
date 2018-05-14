@@ -45,8 +45,8 @@ public class View extends JPanel{
 
 		scale = getScale();
 		overviewRect.setRect(0,0,getWidth()/4, getHeight()/4);
-		// g2D.setColor(Color.WHITE);
-		// g2D.fill(overviewRect);
+		g2D.setColor(Color.WHITE);
+		g2D.fill(overviewRect);
 		g2D.setColor(Color.BLACK);
 		g2D.draw(overviewRect);
 
@@ -55,12 +55,12 @@ public class View extends JPanel{
 		g2D.setColor(Color.BLACK);
 		g2D.draw(marker);
 
-
 		g2D.scale(scale, scale);
-		
+		g2D.translate(-translateX*4,-translateY*4);
 		paintDiagram(g2D);
 
 
+		g2D.translate(+translateX*4,+translateY*4);
 		g2D.scale(0.25/scale,0.25/scale);
 		paintDiagram(g2D);
 		
