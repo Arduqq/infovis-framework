@@ -52,7 +52,7 @@ public class Model {
 	
 	public void importValues() {
 		//File file = new File("cameras.ssv");
-		File file = new File("cars.ssv");
+		File file = new File("cameras.ssv");
 	    Debug.p(file.getAbsoluteFile().toString());
 	   
 	    try {

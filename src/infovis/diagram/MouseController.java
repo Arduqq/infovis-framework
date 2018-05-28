@@ -54,7 +54,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY();
 		double scale = view.getScale();
-		
+
 		if (e.getButton() == MouseEvent.BUTTON3){
 			/*
 			 * add grouped elements to the model
@@ -78,7 +78,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			}
 			model.removeEdges(edgesToRemove);
 			model.removeElement(groupVertex);
-			
+
 		}
 	}
 
@@ -95,7 +95,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
         if (view.markerContains(x,y)) {
             dragMode = true;
         }
-	   
+
 	   if (edgeDrawMode){
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
 			model.addElement(drawingEdge);
@@ -105,20 +105,20 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			 */
 			view.repaint();
 		} else {
-			
+
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
 			/*
 			 * calculate offset
 			 */
 			mouseOffsetX = x - selectedElement.getX() * scale ;
-			mouseOffsetY = y - selectedElement.getY() * scale ;	
+			mouseOffsetY = y - selectedElement.getY() * scale ;
 		}
-		
+
 	}
 	public void mouseReleased(MouseEvent arg0){
 		int x = arg0.getX();
 		int y = arg0.getY();
-		
+
 		if (drawingEdge != null){
 			Element to = getElementContainingPosition(x, y);
 			model.addEdge(new Edge(drawingEdge.getFrom(),(Vertex)to));
@@ -131,24 +131,24 @@ public class MouseController implements MouseListener,MouseMotionListener {
 				Vertex vertex = iter.next();
 				if (groupRectangle.contains(vertex.getShape().getBounds2D())){
 					Debug.p("Vertex found");
-					groupedElements.addVertex(vertex);	
+					groupedElements.addVertex(vertex);
 				}
 			}
 			if (!groupedElements.isEmpty()){
 				model.removeVertices(groupedElements.getVertices());
-				
+
 				Vertex groupVertex = new Vertex(groupRectangle.getCenterX(),groupRectangle.getCenterX());
 				groupVertex.setColor(Color.ORANGE);
 				groupVertex.setGroupedElements(groupedElements);
 				model.addVertex(groupVertex);
-				
-				List<Edge> newEdges = new ArrayList(); 
+
+				List<Edge> newEdges = new ArrayList();
 				for (Iterator<Edge> iter = model.iteratorEdges(); iter.hasNext();) {
 					Edge edge =  iter.next();
-				    if (groupRectangle.contains(edge.getSource().getShape().getBounds2D()) 
+				    if (groupRectangle.contains(edge.getSource().getShape().getBounds2D())
 				    	&& groupRectangle.contains(edge.getTarget().getShape().getBounds2D())){
 				    		groupVertex.getGroupedElements().addEdge(edge);
-                            Debug.p("add Edge to groupedElements");	
+                            Debug.p("add Edge to groupedElements");
                             //iter.remove(); // Warum geht das nicht!
 				    } else if (groupRectangle.contains(edge.getSource().getShape().getBounds2D())){
 				    	groupVertex.getGroupedElements().addEdge(edge);
@@ -166,7 +166,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		}
 		view.repaint();
 	}
-	
+
 	public void mouseDragged(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
@@ -201,7 +201,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	public void setDrawingEdges(boolean drawingEdges) {
 		this.edgeDrawMode = drawingEdges;
 	}
-	
+
 	public void setFisheyeMode(boolean b) {
 		fisheyeMode = b;
 		if (b){
@@ -216,7 +216,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			view.repaint();
 		}
 	}
-	
+
 	/*
 	 * private Methods
 	 */
@@ -225,10 +225,10 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		Iterator<Element> iter = getModel().iterator();
 		while (iter.hasNext()) {
 		  Element element =  iter.next();
-		  if (element.contains(x, y)) currentElement = element;  
+		  if (element.contains(x, y)) currentElement = element;
 		}
 		return currentElement;
 	}
-	
-    
+
+
 }
