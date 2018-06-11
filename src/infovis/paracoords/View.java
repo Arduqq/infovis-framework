@@ -16,6 +16,16 @@ public class View extends JPanel {
 	private Model model = null;
 	private double scaling;
 
+	public Rectangle2D getMarkerRectangle() {
+		return markerRectangle;
+	}
+
+	public void setMarkerRectangle(Rectangle2D markerRectangle) {
+		this.markerRectangle = markerRectangle;
+	}
+
+	private Rectangle2D markerRectangle = new Rectangle2D.Double(0.0,0.0,0.0,0.0);
+
 	public double getScaling() {
 		return scaling;
 	}
@@ -49,8 +59,10 @@ public class View extends JPanel {
 	public void paint(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+		g2D.clearRect(0, 0, getWidth(), getHeight());
 		model.setDim(model.getLabels().size());
 		int dim = model.getDim();
+		lines.clear();
 		g2D.setColor(Color.black);
 		int stepSize = getWidth()/dim;
 		int lineLength = 4*getHeight()/dim;
@@ -72,6 +84,8 @@ public class View extends JPanel {
 				nextCoord = (d.getValue(i+1)-nextMin) * nextScaling;
 				Line2D line = new Line2D.Double(stepSize*i, rangedCoord, stepSize*(i+1), nextCoord);
 				lines.add(line);
+				g2D.setColor(Color.ORANGE);
+				g2D.draw(markerRectangle);
 				g2D.setColor(d.getColor());
 				g2D.draw(line);
 

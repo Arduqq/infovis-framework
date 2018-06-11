@@ -70,6 +70,12 @@ public class Vertex implements Element {
 		shape.setFrame(getX(), y, getWidth() , getHeight());	
 	}
 
+	public double getMaxX() {return shape.getMaxX();
+	}
+
+	public double getMaxY() {return shape.getMaxY();
+	}
+
 	public Color getColor() {
 		return color;
 	}

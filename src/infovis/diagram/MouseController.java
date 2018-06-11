@@ -8,6 +8,7 @@ import infovis.diagram.elements.GroupingRectangle;
 import infovis.diagram.elements.None;
 import infovis.diagram.elements.Vertex;
 import infovis.diagram.layout.Fisheye;
+import infovis.diagram.layout.Layout;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -29,6 +30,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private boolean fisheyeMode;
 	 private GroupingRectangle groupRectangle;
 	 private boolean dragMode = false;
+	private Layout fisheyeLayout = new Fisheye();
 	/*
 	 * Getter And Setter
 	 */
@@ -90,6 +92,8 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	public void mousePressed(MouseEvent e) {
 		int x = e.getX();
 		int y = e.getY();
+		int height = view.getHeight();
+		int width = view.getWidth();
 		double scale = view.getScale();
 
         if (view.markerContains(x,y)) {
@@ -100,10 +104,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
 			model.addElement(drawingEdge);
 		} else if (fisheyeMode){
-			/*
-			 * do handle interactions in fisheye mode
-			 */
-			view.repaint();
+        	view.repaint();
 		} else {
 
 			selectedElement = getElementContainingPosition(x/scale,y/scale);
@@ -187,13 +188,19 @@ public class MouseController implements MouseListener,MouseMotionListener {
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
 		if(view.overviewRectContains(x,y) && view.markerContains(x,y)){
-		    System.out.println("Draggiiiing");
 			view.updateTranslation((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
             view.updateMarker((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
 		}
 		view.repaint();
 	}
 	public void mouseMoved(MouseEvent e) {
+		if (fisheyeMode) {
+			fisheyeLayout.setMouseCoords(e.getX(), e.getY(), view);
+
+			view.setModel(fisheyeLayout.transform(model, view));
+			view.repaint();
+			Debug.println(e.getX()+"");
+		}
 	}
 	public boolean isDrawingEdges() {
 		return edgeDrawMode;
@@ -206,12 +213,12 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		fisheyeMode = b;
 		if (b){
 			Debug.p("new Fisheye Layout");
-			/*
-			 * handle fish eye initial call
-			 */
+			fisheyeMode = true;
+			view.setModel(fisheyeLayout.transform(model, view));
 			view.repaint();
 		} else {
 			Debug.p("new Normal Layout");
+			fisheyeMode = false;
 			view.setModel(model);
 			view.repaint();
 		}
