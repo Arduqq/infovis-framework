@@ -25,6 +25,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	 private Element selectedElement = new None();
 	 private double mouseOffsetX;
 	 private double mouseOffsetY;
+	 private double overviewOffsetX,overviewOffsetY;
 	 private boolean edgeDrawMode = false;
 	 private DrawingEdge drawingEdge = null;
 	 private boolean fisheyeMode;
@@ -90,31 +91,41 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	public void mouseExited(MouseEvent arg0) {
 	}
 	public void mousePressed(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
+		double x = e.getX() - view.getTranslateX();
+		double y = e.getY() - view.getTranslateY();
+		Rectangle2D overview = view.getOverviewRect();
+		double markerX = overview.getX();
+		double markerY = overview.getY();
 		int height = view.getHeight();
 		int width = view.getWidth();
 		double scale = view.getScale();
 
-        if (view.markerContains(x,y)) {
-            dragMode = true;
-        }
+		// markercontains() does not take double inputs
+		if (overview.contains(x, y)) {
+			dragMode = true;
+			Rectangle2D marker = view.getMarker();
+			overviewOffsetX = e.getX() - overview.getX();
+			overviewOffsetY = e.getY() - overview.getY();
+			if (marker.contains(markerX, markerY)) {
+				mouseOffsetX = markerX - marker.getX();
+			}
 
-	   if (edgeDrawMode){
-			drawingEdge = new DrawingEdge((Vertex)getElementContainingPosition(x/scale,y/scale));
-			model.addElement(drawingEdge);
-		} else if (fisheyeMode){
-        	view.repaint();
-		} else {
+			if (edgeDrawMode) {
+				drawingEdge = new DrawingEdge((Vertex) getElementContainingPosition(x / scale, y / scale));
+				model.addElement(drawingEdge);
+			} else if (fisheyeMode) {
+				view.repaint();
+			} else {
 
-			selectedElement = getElementContainingPosition(x/scale,y/scale);
-			/*
-			 * calculate offset
-			 */
-			mouseOffsetX = x - selectedElement.getX() * scale ;
-			mouseOffsetY = y - selectedElement.getY() * scale ;
+				selectedElement = getElementContainingPosition(x / scale, y / scale);
+				/*
+				 * calculate offset
+				 */
+				mouseOffsetX = x - selectedElement.getX() * scale;
+				mouseOffsetY = y - selectedElement.getY() * scale;
+			}
+
 		}
-
 	}
 	public void mouseReleased(MouseEvent arg0){
 		int x = arg0.getX();
@@ -172,7 +183,9 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		int x = e.getX();
 		int y = e.getY();
 		double scale = view.getScale();
-		Rectangle2D overviewRect = view.getOverviewRect();
+		Rectangle2D overview = view.getOverviewRect();
+		double markerX = x - overview.getX();
+		double markerY = y - overview.getY();
 		/*
 		 * Aufgabe 1.2
 		 */
@@ -187,9 +200,11 @@ public class MouseController implements MouseListener,MouseMotionListener {
 		} else if(selectedElement != null){
 			selectedElement.updatePosition((e.getX()-mouseOffsetX)/scale, (e.getY()-mouseOffsetY) /scale);
 		}
-		if(view.overviewRectContains(x,y) && view.markerContains(x,y)){
-			view.updateTranslation((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
-            view.updateMarker((x-mouseOffsetX)/scale, (y-mouseOffsetY)/scale);
+		if(view.overviewRectContains(x,y) && overview.contains(markerX,markerY)){
+			double markerOffsetX = (markerX - mouseOffsetX) * scale;
+			double markerOffsetY = (markerY - mouseOffsetY) * scale;
+			view.updateTranslation(markerOffsetX,markerOffsetY);
+            view.updateMarker((markerX-mouseOffsetX)/scale, (markerY-mouseOffsetY)/scale);
 		}
 		view.repaint();
 	}
@@ -199,7 +214,6 @@ public class MouseController implements MouseListener,MouseMotionListener {
 
 			view.setModel(fisheyeLayout.transform(model, view));
 			view.repaint();
-			Debug.println(e.getX()+"");
 		}
 	}
 	public boolean isDrawingEdges() {
@@ -212,6 +226,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 	public void setFisheyeMode(boolean b) {
 		fisheyeMode = b;
 		if (b){
+
 			Debug.p("new Fisheye Layout");
 			fisheyeMode = true;
 			view.setModel(fisheyeLayout.transform(model, view));

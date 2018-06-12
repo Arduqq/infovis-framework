@@ -46,6 +46,7 @@ public class Fisheye implements Layout{
 		frameCoordX = new double[vertAmount];
 		frameCoordY = new double[vertAmount];
 
+		// calculate new position of every vertice
 		for (int i = 0; i < vertAmount; i++) {
 			Vertex vertex = modelFisheye.getVertices().get(i);
 			frameCoordX[i] = vertex.getX();
@@ -53,12 +54,14 @@ public class Fisheye implements Layout{
 			frameSizeX[i] = vertex.getWidth();
 			frameSizeY[i] = vertex.getHeight();
 
+			// get centers, endpoint and its normal
 			double vertexCenterX = vertex.getCenterX();
 			double vertexCenterY = vertex.getCenterY();
 			double vertexEndX = vertex.getX();
 			double vertexEndY = vertex.getY();
 			double vertexEndNormX, vertexEndNormY;
 
+			// normalization
 			if (vertexCenterX < centerFisheye.getX()) {
 				vertexEndNormX = vertex.getX();
 			} else {
@@ -70,6 +73,7 @@ public class Fisheye implements Layout{
 				vertexEndNormY = vertex.getMaxY();
 			}
 
+			// calculation of the vertex
 			vertexCenterX = calculateNewPosition(centerFisheye.getX(),vertexCenterX,view.getWidth());
 			vertexCenterY = calculateNewPosition(centerFisheye.getY(),vertexCenterY,view.getHeight());
 			vertexEndX = calculateNewPosition(centerFisheye.getY(),vertexEndX,view.getWidth());
@@ -89,7 +93,7 @@ public class Fisheye implements Layout{
 		view.setModel(modelFisheye);
 		view.repaint();
 
-		return model;
+		return modelFisheye;
 	}
 
 	private double calculateNewPosition(double fisheyeCoord, double length, double limit) {
