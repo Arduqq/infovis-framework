@@ -17,6 +17,9 @@ public class View extends JPanel {
 	public void setMarkerRectangle(double min_x, double min_y, double max_x, double max_y) {
 		this.markerRectangle = new Rectangle2D.Double(min_x+50, min_y+50, (max_x+50 - min_x+50), (max_y+50 - min_y+50));
 	}
+	public void setMarkerRectangle(Rectangle2D markerRectangle) {
+		this.markerRectangle = markerRectangle;
+	}
 
 	public ArrayList<Integer> getPlotMatrix() {
 		return plotMatrix;

@@ -16,8 +16,9 @@ public class MouseController implements MouseListener, MouseMotionListener {
 
 	private Model model = null;
 	private View view = null;
-	private double start_x, start_y, mx, my;
+	private double start_x, start_y, tstart_x, tstart_y, mx, my;
 	private boolean drawing;
+	// start_x will be the original starting point; whereas, tstart will be modified in the proces (please don't punch me)
 	private double range_min_x, range_min_y, range_max_x, range_max_y;
 	private double scaling_x, scaling_y, local_min_x, local_min_y;
 	private int dx, dy;
@@ -38,14 +39,16 @@ public class MouseController implements MouseListener, MouseMotionListener {
 				plotMatrix.get(plotMatrix.size()-1),plotMatrix.get(plotMatrix.size()-2));
 		start_x = arg0.getX();
 		start_y = arg0.getY();
+		tstart_x = start_x;
+		tstart_y = start_y;
 		mx = wholeMatrix.getX();
 		my = wholeMatrix.getY();
-		if (wholeMatrix.contains(start_x,start_y)) {
+		if (wholeMatrix.contains(tstart_x,tstart_y)) {
 			Debug.println("I'm in.");
-			start_x = start_x - mx;
-			start_y = start_y - my;
-			dx = (int)(start_x)/spacing;
-			dy = (int)(start_y)/spacing;
+			tstart_x = tstart_x - mx;
+			tstart_y = tstart_y - my;
+			dx = (int)(tstart_x)/spacing;
+			dy = (int)(tstart_y)/spacing;
 			range_min_x = model.getRanges().get(dx).getMin();
 			range_max_x = model.getRanges().get(dx).getMax();
 			range_min_y = model.getRanges().get(dy).getMin();
@@ -70,13 +73,19 @@ public class MouseController implements MouseListener, MouseMotionListener {
 			Debug.println("I'm in drag.");
 			double x = arg0.getX() - mx;
 			double y = arg0.getY() - my;
+			double end_x = arg0.getX();
+			double end_y = arg0.getY();
+			double mark_x = Math.min(start_x,end_x);
+			double mark_y = Math.min(start_y,end_y);
+			double width = Math.max(start_x - end_x, end_x - start_x);
+			double height = Math.max(start_y - end_y, end_y - start_y);
 			double spacing = view.getSpacing();
 
-			double min_x = max(min(start_x, x), dx * spacing);
-			double min_y = max(min(start_y, y), dy * spacing);
-			double max_x = min(max(start_x, x), (dx + 1) * spacing);
-			double max_y = min(max(start_y, y), (dy + 1) * spacing);
-			//view.setMarkerRectangle(min_x, min_y, max_x, max_y);
+			double min_x = max(min(tstart_x, x), dx * spacing);
+			double min_y = max(min(tstart_y, y), dy * spacing);
+			double max_x = min(max(tstart_x, x), (dx + 1) * spacing);
+			double max_y = min(max(tstart_y, y), (dy + 1) * spacing);
+			view.setMarkerRectangle(new Rectangle2D.Double(mark_x,mark_y, width, height));
 
 
 			min_x = min_x - local_min_x + mx;
